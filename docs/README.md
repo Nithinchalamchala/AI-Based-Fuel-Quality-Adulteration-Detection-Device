@@ -63,7 +63,13 @@ python model/model_training.py
 python model/convert_to_tflite.py
 ```
 
-### 2. Upload to ESP32
+### 2. Run Interactive Demo (Streamlit)
+Demonstrate the project on your laptop with a graphical interface:
+```bash
+streamlit run app.py
+```
+
+### 3. Upload to ESP32
 1. Open `esp32/fuel_detector/fuel_detector.ino` in Arduino IDE
 2. Install libraries:
    - `LiquidCrystal_I2C`
@@ -71,8 +77,11 @@ python model/convert_to_tflite.py
 3. Select board: **ESP32 Dev Module**
 4. Upload sketch
 
-### 3. Wire the Circuit
-See [circuit_diagram.md](circuit_diagram.md) for detailed wiring.
+### 4. Wire the Circuit
+See [circuit_diagram.md](docs/circuit_diagram.md) for detailed wiring.
+
+## 🧠 Model Architecture
+For a deep dive into the ML model (math, layers, and logic), read [MODEL_ARCHITECTURE.md](docs/MODEL_ARCHITECTURE.md).
 
 ## 📈 Model Performance
 
