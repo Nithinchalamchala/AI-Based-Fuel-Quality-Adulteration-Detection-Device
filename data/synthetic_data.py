@@ -81,27 +81,48 @@ def clip_values(df):
     df['conductivity'] = df['conductivity'].clip(0.01, 100)
     return df
 
+def generate_hard_corner_cases(n_samples):
+    """
+    Generate tricky cases where only ONE feature is bad.
+    This forces the model to learn that ALL features must be good.
+    """
+    # Case 1: High Dielectric Only (e.g. Chemical solvent)
+    c1 = {
+        'dielectric': np.random.uniform(2.1, 2.5, n_samples),
+        'velocity': np.random.normal(1300, 10, n_samples), # Good
+        'conductivity': np.random.normal(0.3, 0.05, n_samples), # Good
+        'label': 1
+    }
+    
+    # Case 2: Low Velocity Only (e.g. Very light kero mix)
+    c2 = {
+        'dielectric': np.random.normal(1.9, 0.05, n_samples), # Good
+        'velocity': np.random.uniform(1150, 1240, n_samples), # Bad
+        'conductivity': np.random.normal(0.3, 0.05, n_samples), # Good
+        'label': 1
+    }
+    
+    # Case 3: High Conductivity Only (e.g. Trace ions/salts)
+    c3 = {
+        'dielectric': np.random.normal(1.9, 0.05, n_samples), # Good
+        'velocity': np.random.normal(1300, 10, n_samples), # Good
+        'conductivity': np.random.uniform(1.0, 5.0, n_samples), # Bad
+        'label': 1
+    }
+    
+    return pd.concat([pd.DataFrame(c1), pd.DataFrame(c2), pd.DataFrame(c3)])
+
 def main():
     print("=" * 50)
-    print("Fuel Quality Synthetic Dataset Generator")
-    print("=" * 50)
+    print("Generating Enhanced Dataset (with Hard Corners)...")
     
-    # Generate samples
-    print("\nGenerating pure petrol samples...")
-    pure = generate_pure_petrol_samples(SAMPLES_PER_CLASS)
+    pure = generate_pure_petrol_samples(400) # Increased pure samples
+    kero = generate_kerosene_adulterated_samples(100)
+    water = generate_water_adulterated_samples(100)
+    diesel = generate_diesel_adulterated_samples(100)
+    corners = generate_hard_corner_cases(150) # 150 hard cases
     
-    print("Generating kerosene-adulterated samples...")
-    kerosene_adulterated = generate_kerosene_adulterated_samples(SAMPLES_PER_CLASS // 3)
-    
-    print("Generating water-adulterated samples...")
-    water_adulterated = generate_water_adulterated_samples(SAMPLES_PER_CLASS // 3)
-    
-    print("Generating diesel-adulterated samples...")
-    diesel_adulterated = generate_diesel_adulterated_samples(SAMPLES_PER_CLASS // 3)
-    
-    # Combine all data
-    df = pd.concat([pure, kerosene_adulterated, water_adulterated, diesel_adulterated], 
-                   ignore_index=True)
+    df = pd.concat([pure, kero, water, diesel, corners], ignore_index=True)
     
     # Clip values to realistic bounds
     df = clip_values(df)
