@@ -1,0 +1,4 @@
+# Scaler parameters for ESP32
+# Format: mean_dielectric, mean_velocity, mean_conductivity
+MEAN = [2.371911, 1289.732665, 4.567489]
+STD = [1.063877, 35.678684, 10.728714]
